@@ -35,7 +35,7 @@ function App() {
     <NavigationContainer>
       {/* <StatusBar backgroundColor={"#53a20a"} /> */}
 
-      <MyStatusBar backgroundColor="#5E8D48" barStyle="light-content" />
+      {/* <MyStatusBar backgroundColor="#5E8D48" barStyle="light-content" /> */}
       {/* <View style={styles.appBar} /> */}
       {!user ? <MyStack /> : <DrawerScreen />}
     </NavigationContainer>

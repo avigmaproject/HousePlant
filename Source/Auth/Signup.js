@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
+  Platform,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import InputText from "../SmartComponent/InputText";
@@ -32,6 +33,8 @@ import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
+import { appleAuth } from '@invertase/react-native-apple-authentication';
+
 class Signup extends Component {
   constructor() {
     super();
@@ -75,6 +78,51 @@ class Signup extends Component {
       });
     });
   };
+async  _onhadleApple() {
+    // this.setState({ isLoading: true });
+
+// Start the sign-in request
+  const appleAuthRequestResponse = await appleAuth.performRequest({
+    requestedOperation: appleAuth.Operation.LOGIN,
+    requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+  });
+
+  // Ensure Apple returned a user identityToken
+  if (!appleAuthRequestResponse.identityToken) {
+    this.setState({ isLoading: false });
+
+    throw new Error('Apple Sign-In failed - no identify token returned');
+  }
+
+  // Create a Firebase credential from the response
+  const { identityToken, nonce } = appleAuthRequestResponse;
+
+  if(identityToken){
+let data = qs.stringify({
+          grant_type: "password",
+          username: appleAuthRequestResponse.email,
+          password: "",
+          ClientId: 5,
+          FirstName: "",
+          Role: 2,
+          User_Login_Type: 3,
+          User_Token_val: appleAuthRequestResponse.identityToken,
+          IMEI: fcmtoken,
+        });
+        console.log("hiiiii", data);
+        login(data).then((res) => {
+          if (res) {
+            console.log("inform user", res.access_token);
+            this.props.setToken(res.access_token);
+            this.props.setLoggedIn(true);
+            this.props.setUserType(false);
+            this.setState({ isLoading: false });
+          }}
+
+        )}
+    this.setState({ isLoading: false });
+
+}
   GoogleConfig = async () => {
     // this.setState({ isLoading: true });
 
@@ -485,6 +533,14 @@ class Signup extends Component {
                   color2="#D44837"
                   icon="google-plus"
                 />
+                {Platform.OS ==="ios" && ( <Button
+                  onPress={() => this._onhadleApple()}
+                  title="Sign In With Apple"
+                  color1="black"
+                  color2="black"
+                  icon="apple"
+                />)}
+               
               </View>
               <View
                 style={{

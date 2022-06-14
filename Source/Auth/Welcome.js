@@ -29,6 +29,7 @@ import {
 import { connect } from "react-redux";
 import qs from "qs";
 import Spinner from "react-native-loading-spinner-overlay";
+import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 class Welcome extends Component {
   constructor(props) {
@@ -39,6 +40,51 @@ class Welcome extends Component {
       isLoading: false,
     };
   }
+async  _onhadleApple() {
+    // this.setState({ isLoading: true });
+
+// Start the sign-in request
+  const appleAuthRequestResponse = await appleAuth.performRequest({
+    requestedOperation: appleAuth.Operation.LOGIN,
+    requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+  });
+
+  // Ensure Apple returned a user identityToken
+  if (!appleAuthRequestResponse.identityToken) {
+    this.setState({ isLoading: false });
+
+    throw new Error('Apple Sign-In failed - no identify token returned');
+  }
+
+  // Create a Firebase credential from the response
+  const { identityToken, nonce } = appleAuthRequestResponse;
+
+  if(identityToken){
+let data = qs.stringify({
+          grant_type: "password",
+          username: appleAuthRequestResponse.email,
+          password: "",
+          ClientId: 5,
+          FirstName: "",
+          Role: 2,
+          User_Login_Type: 3,
+          User_Token_val: appleAuthRequestResponse.identityToken,
+          IMEI: fcmtoken,
+        });
+        console.log("hiiiii", data);
+        login(data).then((res) => {
+          if (res) {
+            console.log("inform user", res.access_token);
+            this.props.setToken(res.access_token);
+            this.props.setLoggedIn(true);
+            this.props.setUserType(false);
+            this.setState({ isLoading: false });
+          }}
+
+        )}
+    this.setState({ isLoading: false });
+
+}
 
   GoogleConfig = async () => {
     this.setState({ isLoading: true });
@@ -77,12 +123,12 @@ class Welcome extends Component {
             this.props.setToken(res.access_token);
             this.props.setLoggedIn(true);
             this.props.setUserType(false);
-            console.log("123addusermasterdata", response);
             this.setState({ isLoading: false });
           });
         }
       });
     } catch (error) {
+      this.setState({ isLoading: false });
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         alert("SIGN_IN_CANCELLED");
       } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -290,6 +336,15 @@ class Welcome extends Component {
             color2="#D44837"
             icon="google-plus"
           />
+        {Platform.OS ==="ios" && ( 
+          <Button
+            onPress={() => this._onhadleApple()}
+            title="Sign In With Apple"
+            color1="black"
+            color2="black"
+            icon="apple"
+          />
+        )}
           <View
             style={{
               flex: 0.3,
