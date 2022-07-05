@@ -52,26 +52,22 @@ async  _onhadleApple() {
   // Ensure Apple returned a user identityToken
   if (!appleAuthRequestResponse.identityToken) {
     this.setState({ isLoading: false });
-
     throw new Error('Apple Sign-In failed - no identify token returned');
   }
-
   // Create a Firebase credential from the response
-  const { identityToken, nonce } = appleAuthRequestResponse;
-
+  const { identityToken } = appleAuthRequestResponse;
   if(identityToken){
-let data = qs.stringify({
-          grant_type: "password",
-          username: appleAuthRequestResponse.email,
-          password: "",
-          ClientId: 5,
-          FirstName: "",
-          Role: 2,
-          User_Login_Type: 3,
-          User_Token_val: appleAuthRequestResponse.identityToken,
-          IMEI: fcmtoken,
-        });
-        console.log("hiiiii", data);
+    let data = qs.stringify({
+      grant_type: "password",
+      username: appleAuthRequestResponse.email,
+      password: "",
+      ClientId: 5,
+      FirstName: "",
+      Role: 2,
+      User_Login_Type: 3,
+      User_Token_val: appleAuthRequestResponse.identityToken,
+      IMEI: fcmtoken,
+    });
         login(data).then((res) => {
           if (res) {
             console.log("inform user", res.access_token);
@@ -89,13 +85,12 @@ let data = qs.stringify({
   GoogleConfig = async () => {
     this.setState({ isLoading: true });
     console.log("GoogleSignin", GoogleSignin);
-    // await GoogleSignin.signOut();
+    await GoogleSignin.signOut();
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       console.log("userInfoGoogleSignin", userInfo);
       console.log("idToken", userInfo.idToken);
-      // alert(userInfo.idToken);
       let data = qs.stringify({
         grant_type: "password",
         username: userInfo.user.email,
@@ -267,7 +262,6 @@ let data = qs.stringify({
           console.log("Loginlink", link);
           this.props.navigation.navigate("ResetPassword", { link: link.url });
         }
-        console.log("Loginlinklink", link);
       });
   };
   render() {
@@ -284,7 +278,6 @@ let data = qs.stringify({
             style={{
               justifyContent: "center",
               alignItems: "center",
-              // backgroundColor: 'pink',
               flex: 0.3,
               marginTop: 100,
             }}
@@ -336,7 +329,7 @@ let data = qs.stringify({
             color2="#D44837"
             icon="google-plus"
           />
-        {Platform.OS ==="ios" && ( 
+        {Platform.OS ==="ios" && appleAuth.isSupported  && ( 
           <Button
             onPress={() => this._onhadleApple()}
             title="Sign In With Apple"
@@ -345,6 +338,11 @@ let data = qs.stringify({
             icon="apple"
           />
         )}
+        <View style={{alignSelf:"center",marginTop:20}}>
+        <TouchableOpacity onPress={() => this.props.setLoggedIn(true)}>
+          <Text style={{ fontSize: 15,  color: "gray" }}>For now skip login</Text>
+        </TouchableOpacity>
+        </View>
           <View
             style={{
               flex: 0.3,
@@ -356,10 +354,8 @@ let data = qs.stringify({
             <Text style={{ fontSize: 15, color: "gray" }}>
               Don't have an account?
             </Text>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate("Signup")}
-            >
-              <Text style={{ fontSize: 15, color: "#53a20a" }}> Sign up</Text>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate("Signup")}>
+              <Text style={{ fontSize: 15, color: "#53a20a" }}>Sign up</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>

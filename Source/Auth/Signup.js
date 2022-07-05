@@ -389,7 +389,7 @@ let data = qs.stringify({
       ErrorPassword2,
       isLoading,
     } = this.state;
-    console.log(ErrorCPassword);
+    // console.log(AppleAuth.isSupported);
     return (
       <View>
         <ImageBackground
@@ -407,7 +407,6 @@ let data = qs.stringify({
                 navigation={this.props.navigation}
               />
               <Spinner visible={isLoading} />
-
               <View style={{ marginLeft: 20 }}>
                 <View
                   style={{
@@ -424,14 +423,7 @@ let data = qs.stringify({
                   >
                     Welcome to
                   </Text>
-                  <Text
-                    style={{
-                      color: "#4E4E4E",
-                      fontSize: 15,
-                      fontFamily: "Roboto-Medium",
-                    }}
-                  >
-                    {" "}
+                  <Text style={{color: "#4E4E4E",fontSize: 15,fontFamily: "Roboto-Medium"}}>
                     FIDDLE LEAF FIG DOCTOR
                   </Text>
                 </View>
@@ -533,7 +525,7 @@ let data = qs.stringify({
                   color2="#D44837"
                   icon="google-plus"
                 />
-                {Platform.OS ==="ios" && ( <Button
+                {Platform.OS ==="ios" && appleAuth.isSupported && ( <Button
                   onPress={() => this._onhadleApple()}
                   title="Sign In With Apple"
                   color1="black"

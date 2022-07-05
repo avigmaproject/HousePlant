@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { Avatar, Title, Drawer, Text } from "react-native-paper";
+import { Avatar, Title, Drawer, Text ,Caption} from "react-native-paper";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { signout } from "../store/action/auth/action";
 import { setProfile, setMembership } from "../store/action/profile/action";
@@ -92,14 +92,18 @@ export default function DrawerContant({ navigation, props }) {
   );
 
   useEffect(() => {
-    GetUserProfile();
+    if(token){
+        GetUserProfile();
+    }
   }, []);
   const onLogout = () => {
     dispatch(signout());
   };
   useFocusEffect(
     React.useCallback(() => {
-      GetUserProfile();
+      if(token){
+        GetUserProfile();
+       }
       return () => console.log("close");
     }, [])
   );
@@ -143,25 +147,27 @@ export default function DrawerContant({ navigation, props }) {
                 alignItems: "center",
               }}
             >
-              {profile.User_Image_Path ? (
+              {profile.User_Image_Path && token ? (
                 <Avatar.Image
                   source={{ uri: profile.User_Image_Path }}
                   size={70}
                 />
               ) : (
-                <Avatar.Image
+               (<Avatar.Image
                   source={require("../../assets/plan_app_images/contact-icon.png")}
                   // uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg',
                   size={70}
-                />
+                />)
               )}
-
-              <View style={{}}>
+              {token ? (<View style={{}}>
                 <Title>{profile.User_Name}</Title>
                 {/* <TouchableOpacity onPress={() => onLogout()}>
                   <Caption style={styles.caption}>Logout</Caption>
                 </TouchableOpacity> */}
-              </View>
+              </View>) : ( <TouchableOpacity onPress={() => onLogout()}>
+                  <Caption style={styles.caption}>Login </Caption>
+                </TouchableOpacity>)}
+              
             </View>
           </View>
 
@@ -179,21 +185,23 @@ export default function DrawerContant({ navigation, props }) {
               onPress={() => navigation.navigate("Home")}
               {...props}
             />
-            <DrawerItems
+            {token && (
+             <DrawerItems
               name="user"
               image={require("../../assets/plan_app_images/sidebar-icon/profile-icon.png")}
               label={"My Profile"}
               onPress={() => navigation.navigate("Profile")}
               {...props}
             />
-            <DrawerItems
-              name="questioncircleo"
-              image={require("../../assets/plan_app_images/sidebar-icon/quiz.png")}
-              label={"Quiz"}
-              onPress={() => navigation.navigate("Quiz")}
-              {...props}
-            />
-            {profile.User_Ispaid && (
+            )}
+              {token &&( <DrawerItems
+                name="questioncircleo"
+                image={require("../../assets/plan_app_images/sidebar-icon/quiz.png")}
+                label={"Quiz"}
+                onPress={() => navigation.navigate("Quiz")}
+                {...props}
+              />)}
+            {profile.User_Ispaid && token && (
               <DrawerItems
                 name="profile"
                 image={require("../../assets/plan_app_images/sidebar-icon/contact.png")}
@@ -214,7 +222,7 @@ export default function DrawerContant({ navigation, props }) {
               }
               {...props}
             />
-            {profile.User_Ispaid && (
+            {profile.User_Ispaid && token &&(
               <DrawerItems
                 name="notification"
                 image={require("../../assets/plan_app_images/sidebar-icon/notification.png")}
@@ -223,7 +231,7 @@ export default function DrawerContant({ navigation, props }) {
                 {...props}
               />
             )}
-            {profile.User_Ispaid && (
+            {profile.User_Ispaid && token && (
               <DrawerItems
                 name="deleteusergroup"
                 image={require("../../assets/plan_app_images/sidebar-icon/contact.png")}
@@ -259,14 +267,15 @@ export default function DrawerContant({ navigation, props }) {
                 {...props}
               />
             )} */}
-            <DrawerItems
+            {token && ( <DrawerItems
               name="poweroff"
               image={require("../../assets/plan_app_images/sidebar-icon/logout.png")}
               label={"Logout"}
               onPress={() => onLogout()}
               {...props}
-            />
-            {!profile.User_Ispaid && (
+            />)}
+           
+            {!profile.User_Ispaid && token &&(
               <View style={{ marginTop: 20 }}>
                 <MamberShip
                   label={"Ask the Fiddle Leaf Fig Doctor"}
@@ -295,8 +304,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   caption: {
-    fontSize: 15,
+    fontSize: 20,
     color: "#53a20a",
+    lineHeight:40,
+    fontStyle: 'italic',
     textDecorationLine: "underline",
   },
   row: {

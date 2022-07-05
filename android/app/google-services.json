@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "89731374087-pnen94ergeuqebgvcvfn5lt0oh0p04tr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.houseplant",
+            "certificate_hash": "657ed3bfb7671976b02f46b77ecb4c1fba18fca3"
+          }
+        },
+        {
           "client_id": "89731374087-ujos5t0mvnli7gc5ukq2sdkm86i43co5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -45,6 +53,13 @@
             {
               "client_id": "89731374087-idru0s62rve5tunsnct7ms341ea0lcib.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "89731374087-mqu077dj9pk7221n4ijrikkce4vm7s38.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.HousePlant"
+              }
             }
           ]
         }

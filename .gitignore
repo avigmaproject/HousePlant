@@ -25,6 +25,7 @@ dist/
 
 # JetBrains IDE
 .idea/
+.bin
 
 # Unit test reports
 TEST*.xml
@@ -47,6 +48,8 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
+*.hprof
 *.bin
 *.apk 
 android/.gradle/6.2/executionHistory/executionHistory.bin
+app/build
